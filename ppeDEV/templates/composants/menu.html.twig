@@ -1,0 +1,20 @@
+<!-- <link rel="stylesheet" href="css/searchBar.css"> -->
+
+
+<div class="dropdown mr-2">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Menu</button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="{{ path('homepagePatient') }}">Gestion des patients </a>
+        <a class="dropdown-item" href="{{ path('homepageStay') }}">Gestion des séjours</a>
+        
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{ path('homepageStaff') }}">Gestion du personnel</a>
+            <a class="dropdown-item" href="{{ path('homepageHospital') }}">Gestion de l'hôpital</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{ path('logConnection') }}">Historique des connexions</a>
+            <a class="dropdown-item" href="{{ path('logManagePatient') }}">Historique des modifications des patients</a>
+            <a class="dropdown-item" href="{{ path('logManageStay') }}">Historique des modifications des séjours</a>
+        {% endif %}
+    </div>
+</div>

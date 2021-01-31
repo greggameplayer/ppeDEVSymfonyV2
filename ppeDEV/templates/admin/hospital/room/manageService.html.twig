@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset("../../css/searchBar.css") }}">
+    <link rel="stylesheet" href="{{ asset("../../css/homepage.css") }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/deleteAlert.js') }}" defer></script>
+{% endblock %}
+
+
+{% block title %}Gestion {{ service }} {% endblock %}
+
+{% block body %}
+    {% include 'composants/header.html.twig' %}
+    {% include 'composants/searchBarHospital.html.twig' %}
+
+
+    {% if rooms| length == 0  %}
+        <p class="alert alert-warning text-center">Ce service n'a pas encore de chambre</p>
+    {% else  %}
+
+<div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Numéro de chambre</th>
+            <th scope="col">Nombre de lits</th>
+            <th scope="col" class="text-center">Commandes</th>
+          </tr>
+        </thead>
+          <tbody>
+        {% for room in rooms %}
+                  <tr>
+                    <td>{{ room.number }}</td>
+                    <td>{{ room.countBed }}</td>
+                    <td>
+                        <div class="d-flex flex-row justify-content-center">
+                        <a href="{{ path( 'addBed',  {'id': id, "name" : service, "room" : room.id} ) }}" class="btn btn-primary mr-3 w-50"><i class="fas fa-plus"></i> Ajouter un lit</a>
+                        <a href="{{ path( 'removeBed',  {'id': id, "name" : service, "room" : room.id} ) }}" class="btn btn-warning mr-3 w-50"><i class="fas fa-backspace"></i> Retirer un lit</a>
+                        <a href="{{ path( 'updateRoom',  {'id': id, "name" : service, "room" : room.id} ) }}" class="btn btn-info mr-3 w-50"><i class="far fa-edit"></i> Modifier</a>
+                        <a href="{{ path( 'delRoom',  {'id': id, "name" : service, "room" : room.id} ) }}" class="btn btn-danger mr-3 w-50 delete"><i class="far fa-trash-alt"></i> Supprimer</a>
+                        </div>
+                    </td>
+                  </tr>
+
+        {% endfor %}
+          </tbody>
+      </table>
+</div>
+        {{ knp_pagination_render(rooms) }}
+
+    {% endif %}
+
+    <div class="mx-5">
+        <a href="{{ path( 'addRoom',  {'id': id, "name" : service} ) }}" class="btn btn-primary w-100 add">Ajouter une chambre</a>
+    </div>
+
+    <div class="modal" tabindex="-1" id="modalDeleteAlert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Attention</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Etes-vous sûre de vouloir supprimer cette chambre ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalAlertNon">Non</button>
+                    <button type="button" class="btn btn-primary" id="modalAlertOui">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

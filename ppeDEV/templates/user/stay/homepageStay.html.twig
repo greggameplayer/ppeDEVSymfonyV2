@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset("../css/searchBar.css") }}" xmlns="http://www.w3.org/1999/html">
+    <link rel="stylesheet" href="{{asset("../css/homepage.css")}}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/deleteAlert.js') }}" defer></script>
+    <script src="{{ asset('js/addAlert.js') }}" defer></script>
+{% endblock %}
+
+
+{% block title %}Séjours{% endblock %}
+
+{% block body %}
+    {% include 'composants/header.html.twig' %}
+    {% include 'composants/searchbarStay.html.twig' %}
+
+
+
+
+    <div class="table-responsive">
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Numéro</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Service</th>
+            <th scope="col">Chambre</th>
+            <th scope="col">Lit</th>
+            <th scope="col">Date d'entré</th>
+            <th scope="col">Date de sortie</th>
+            <th scope="col">Durée du séjour</th>
+            <th scope="col">Date de création</th>
+            <th scope="col">Commandes</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% set num = 0 %}
+
+            {% for stay in stays %}
+                {% set num = num + 1 %}
+                <tr>
+                    <th scope="row">{{ num }}</th>
+                    <td>{{ stay.lastname }}</td>
+                    <td>{{ stay.firstname }}</td>
+                    <td>{{ stay.serviceName }}</td>
+                    <td>{{ stay.roomNumber }}</td>
+                    <td>{{ stay.bedNumber }}</td>
+                    <td>{{ stay.entryDate|date('d/m/Y H:i') }}</td>
+                    <td>{{ stay.leaveDate|date('d/m/Y H:i') }}</td>
+                    <td>{{ stay.duration }}</td>
+                    <td>{{ stay.creationDate|date('d/m/Y H:i') }}</td>
+                    <td>
+                        <div class="d-flex flex-row justify-content-center">
+                            <a href="{{ path( 'updateStay',  {'id': stay.id, 'serviceId': stay.serviceId} ) }}" class="btn w-50 mr-3 btn-warning"><i class="far fa-edit"></i> Modifier</a>
+                            <a href="{{ path( 'delStay',  {'id': stay.id} ) }}" class="btn btn-info w-50 delete"><i class="far fa-trash-alt"></i> Supprimer</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    <tfoot>
+
+
+
+    <tr>
+        <td colspan="11">
+            <a href="{{ path('homepagePatient') }}" class="btn btn-primary w-100 add">Ajouter un séjour</a>
+        </td>
+    </tr>
+
+        
+    </tfoot>
+    </table>
+    </div>
+
+    
+        <div class="d-flex justify-content-center">
+            {{ knp_pagination_render(stays) }}
+        </div>
+
+
+    <div class="modal" tabindex="-1" id="modalDeleteAlert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Attention</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Etes-vous sûre de vouloir supprimer ce séjour ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalAlertNon">Non</button>
+                    <button type="button" class="btn btn-primary" id="modalAlertOui">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="modalAddAlert">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Information</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Le patient existe t-il déjà ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalAddAlertNon">Non</button>
+                    <button type="button" class="btn btn-primary" id="modalAddAlertOui">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
