@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\StaffRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -19,22 +21,6 @@ class Staff implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
-    private $login;
-
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
-
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    private $password;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $firstName;
@@ -44,21 +30,25 @@ class Staff implements UserInterface
      */
     private $lastName;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UpdateStatus::class, mappedBy="staff")
+     */
+    private $updateStatuses;
+
+    public function __construct()
+    {
+        $this->updateStatuses = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getLogin(): ?string
-    {
-        return $this->login;
-    }
-
-    public function setLogin(string $login): self
-    {
-        $this->login = $login;
-
-        return $this;
     }
 
     /**
@@ -68,41 +58,10 @@ class Staff implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->login;
-    }
+        /** @var $user User */
+        $user = $this->user;
 
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getPassword(): string
-    {
-        return (string) $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
+        return (string) $user->getLogin();
     }
 
     /**
@@ -142,6 +101,64 @@ class Staff implements UserInterface
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getRoles()
+    {
+        /** @var $user User */
+        $user = $this->user;
+
+        return $user->getRoles();
+    }
+
+    public function getPassword()
+    {
+        /** @var $user User */
+        $user = $this->user;
+
+        return $user->getPassword();
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UpdateStatus[]
+     */
+    public function getUpdateStatuses(): Collection
+    {
+        return $this->updateStatuses;
+    }
+
+    public function addUpdateStatus(UpdateStatus $updateStatus): self
+    {
+        if (!$this->updateStatuses->contains($updateStatus)) {
+            $this->updateStatuses[] = $updateStatus;
+            $updateStatus->setStaff($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUpdateStatus(UpdateStatus $updateStatus): self
+    {
+        if ($this->updateStatuses->removeElement($updateStatus)) {
+            // set the owning side to null (unless already changed)
+            if ($updateStatus->getStaff() === $this) {
+                $updateStatus->setStaff(null);
+            }
+        }
 
         return $this;
     }

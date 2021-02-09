@@ -59,10 +59,21 @@ class Patient
      */
     private $activate = 1;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Meeting::class, mappedBy="patient")
+     */
+    private $meetings;
+
     public function __construct()
     {
         $this->stays = new ArrayCollection();
         $this->manages = new ArrayCollection();
+        $this->meetings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,6 +209,48 @@ class Patient
     public function setActivate(bool $activate): self
     {
         $this->activate = $activate;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Meeting[]
+     */
+    public function getMeetings(): Collection
+    {
+        return $this->meetings;
+    }
+
+    public function addMeeting(Meeting $meeting): self
+    {
+        if (!$this->meetings->contains($meeting)) {
+            $this->meetings[] = $meeting;
+            $meeting->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeeting(Meeting $meeting): self
+    {
+        if ($this->meetings->removeElement($meeting)) {
+            // set the owning side to null (unless already changed)
+            if ($meeting->getPatient() === $this) {
+                $meeting->setPatient(null);
+            }
+        }
 
         return $this;
     }
