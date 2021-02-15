@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Staff;
+use App\Entity\User;
 use App\Form\StaffType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,20 +44,23 @@ class StaffController extends AbstractController
     public function createNewStaffMember(Request $request, UserPasswordEncoderInterface $passwordEncoder):Response
     {
         $staff = new Staff;
+        $user = new User;
         $form =  $this->createForm(StaffType::class, $staff);
         $form->handleRequest($request);
 
         if($form->isSubmitted()&& $form->isValid()){
-            $staff->setPassword(
+            $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $staff,
                     $form->get('password')->getData()
                 )
             );
+            $staff->setUser($user);
             $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
             $em->persist($staff);
             $em->flush();
-            return $this->redirectToRoute('homepageStaff'); 
+            return $this->redirectToRoute('homepageStaff');
         }
 
         return $this->render('admin/staff/addStaff.html.twig', [
@@ -73,6 +77,7 @@ class StaffController extends AbstractController
     {
         $staff = $this->getDoctrine()->getRepository(Staff::class)->findOneBy(['id' => $id]);
         $em = $this->getDoctrine()->getManager();
+        $em->remove($staff->getUser());
         $em->remove($staff);
         $em->flush();
 
