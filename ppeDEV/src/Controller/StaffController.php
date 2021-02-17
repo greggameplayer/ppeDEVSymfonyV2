@@ -52,9 +52,11 @@ class StaffController extends AbstractController
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $staff,
-                    $form->get('password')->getData()
+                    $form->get('user')->get('password')->getData()
                 )
             );
+            $user->setLogin($form->get('user')->get('login')->getData());
+            $user->setRoles($form->get('user')->get('roles')->getData());
             $staff->setUser($user);
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
@@ -89,15 +91,27 @@ class StaffController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function updateStaff(Request $request, $id):Response
+    public function updateStaff(Request $request, $id, UserPasswordEncoderInterface $passwordEncoder):Response
     {
         $staff = $this->getDoctrine()->getRepository(Staff::class)->findOneBy(['id' => $id]);
+        $user = new User;
         $form =  $this->createForm(StaffType::class, $staff);
         $form->handleRequest($request);
 
         if($form->isSubmitted()&& $form->isValid()){
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $staff,
+                    $form->get('user')->get('password')->getData()
+                )
+            );
+            $user->setLogin($form->get('user')->get('login')->getData());
+            $user->setRoles($form->get('user')->get('roles')->getData());
+            $staff->setUser($user);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($staff);
+            $em->persist($user);
             $em->flush();
             return $this->redirectToRoute('homepagePatient');
         }
