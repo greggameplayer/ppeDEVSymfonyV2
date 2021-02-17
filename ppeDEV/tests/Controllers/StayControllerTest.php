@@ -3,6 +3,7 @@
 namespace App\tests;
 
 use App\Entity\Patient;
+use App\Entity\Stay;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class StayControllerTest extends WebTestCase
@@ -46,27 +47,27 @@ class StayControllerTest extends WebTestCase
         $client = SecurityControllerTest::getUserClient();
         $container = self::$container;
         $em = $container->get('doctrine.orm.entity_manager');
-        /** @var Patient $patient */
-        $patient = $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad']);
-        $client->request('GET', '/user/modifierSéjour/'. $patient->getId() .'/{serviceId}');
+        /** @var Stay $stay */
+        $stay = $em->getRepository('App:Stay')->findOneBy(['idPatient' => $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad'])]);
+        $client->request('GET', '/user/modifierSéjour/'. $stay->getId() .'/{serviceId}');
         $this->assertResponseStatusCodeSame(200);
     }
     public function testupdateSatyRole_Admin(){
         $client = SecurityControllerTest::getAdminClient();
         $container = self::$container;
         $em = $container->get('doctrine.orm.entity_manager');
-        /** @var Patient $patient */
-        $patient = $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad']);
-        $client->request('GET', '/user/modifierSéjour/'. $patient->getId() .'/{serviceId}');
+        /** @var Stay $stay */
+        $stay = $em->getRepository('App:Stay')->findOneBy(['idPatient' => $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad'])]);
+        $client->request('GET', '/user/modifierSéjour/'. $stay->getId() .'/{serviceId}');
         $this->assertResponseStatusCodeSame(200);
     }
     public function testupdateSatyWithoutConnection(){
         $client = static::createClient();
         $container = self::$container;
         $em = $container->get('doctrine.orm.entity_manager');
-        /** @var Patient $patient */
-        $patient = $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad']);
-        $client->request('GET', '/user/modifierSéjour/'. $patient->getId() .'/{serviceId}');
+        /** @var Stay $stay */
+        $stay = $em->getRepository('App:Stay')->findOneBy(['idPatient' => $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad'])]);
+        $client->request('GET', '/user/modifierSéjour/'. $stay->getId() .'/{serviceId}');
         $this->assertResponseStatusCodeSame(302);
     }
 
@@ -75,27 +76,27 @@ class StayControllerTest extends WebTestCase
         $client = SecurityControllerTest::getUserClient();
         $container = self::$container;
         $em = $container->get('doctrine.orm.entity_manager');
-        /** @var Patient $patient */
-        $patient = $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad']);
-        $client->request('GET', '/user/erreurModifierSéjour/'. $patient->getId() .'/{serviceId}/1');
+        /** @var Stay $stay */
+        $stay = $em->getRepository('App:Stay')->findOneBy(['idPatient' => $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad'])]);
+        $client->request('GET', '/user/erreurModifierSéjour/'. $stay->getId() .'/{serviceId}/1');
         $this->assertResponseStatusCodeSame(200);
     }
     public function testfailUpdateStayRole_Admin(){
         $client = SecurityControllerTest::getAdminClient();
         $container = self::$container;
         $em = $container->get('doctrine.orm.entity_manager');
-        /** @var Patient $patient */
-        $patient = $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad']);
-        $client->request('GET', '/user/erreurModifierSéjour/'. $patient->getId() .'/{serviceId}/1');
+        /** @var Stay $stay */
+        $stay = $em->getRepository('App:Stay')->findOneBy(['idPatient' => $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad'])]);
+        $client->request('GET', '/user/erreurModifierSéjour/'. $stay->getId() .'/{serviceId}/1');
         $this->assertResponseStatusCodeSame(200);
     }
     public function testfailUpdateStayWithoutConnection(){
         $client = static::createClient();
         $container = self::$container;
         $em = $container->get('doctrine.orm.entity_manager');
-        /** @var Patient $patient */
-        $patient = $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad']);
-        $client->request('GET', '/user/erreurModifierSéjour/'. $patient->getId() .'/{serviceId}/1');
+        /** @var Stay $stay */
+        $stay = $em->getRepository('App:Stay')->findOneBy(['idPatient' => $em->getRepository('App:Patient')->findOneBy(['firstName' => 'Jad'])]);
+        $client->request('GET', '/user/erreurModifierSéjour/'. $stay->getId() .'/{serviceId}/1');
         $this->assertResponseStatusCodeSame(302);
     }
 }
