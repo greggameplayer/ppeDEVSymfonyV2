@@ -3,7 +3,8 @@ name: Full CI process for Symfony 5
 on:
   push:
     branches:
-      - master
+      - dev
+      - main
 env:
   ES_HTTP_PORT: 9209
 jobs:
