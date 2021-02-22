@@ -1,6 +1,20 @@
 
-ppeDEV/.idea/
-ppeDEV/.idea/workspace.xml
-ppeDEV/.idea/workspace.xml
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
 
-.idea/
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###fichier à ignorer
+.env
+/.idea/
