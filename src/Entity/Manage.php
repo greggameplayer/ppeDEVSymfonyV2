@@ -29,7 +29,7 @@ class Manage
     private $idPatient;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Staff::class, inversedBy="manages")
+     * @ORM\ManyToOne(targetEntity=Staff::class)
      * @ORM\JoinColumn(nullable=true)
      */
     private $idStaff;

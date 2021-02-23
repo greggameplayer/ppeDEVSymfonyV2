@@ -16,5 +16,4 @@
 ###< symfony/phpunit-bridge ###
 
 ###fichier à ignorer
-.env
 /.idea/

@@ -24,7 +24,7 @@ class AddStay
     private $idStay;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Staff::class, inversedBy="addStays")
+     * @ORM\ManyToOne(targetEntity=Staff::class)
      * @ORM\JoinColumn(nullable=true)
      */
     private $idStaff;

@@ -41,6 +41,12 @@ class Staff implements UserInterface
      */
     private $updateStatuses;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Service::class, inversedBy="staff")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $idService;
+
     public function __construct()
     {
         $this->updateStatuses = new ArrayCollection();
@@ -62,6 +68,18 @@ class Staff implements UserInterface
         $user = $this->user;
 
         return (string) $user->getLogin();
+    }
+
+    public function getIdService(): ?Service
+    {
+        return $this->idService;
+    }
+
+    public function setIdService(?Service $idService): self
+    {
+        $this->idService = $idService;
+
+        return $this;
     }
 
     /**
