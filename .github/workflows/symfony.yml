@@ -3,7 +3,6 @@ name: Full CI process for Symfony 5
 on:
   push:
     branches:
-      - main
       - dev
 env:
   ES_HTTP_PORT: 9209
@@ -48,8 +47,9 @@ jobs:
         uses: shivammathur/setup-php@2.9.0
         with:
           php-version: ${{ matrix.php-versions }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
-          tools: composer:v2
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo, xdebug
+          tools: composer:v2, phpunit
+          coverage: xdebug
         env:
           update: true
 
@@ -105,4 +105,10 @@ jobs:
 
       - name: Run functionnal and unit tests
         run: |
-          php bin/phpunit
+          phpunit --coverage-clover coverage.xml
+      
+      - name: Publish on codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          files: ./coverage.xml
