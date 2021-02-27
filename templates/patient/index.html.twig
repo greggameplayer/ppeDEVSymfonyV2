@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{asset("css/homepage.css")}}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.css">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.1.0/main.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js" defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/locales-all.js' defer></script>
+    <script src="{{ asset('js/calendar.js') }}" defer></script>
+{% endblock %}
+
+
+{% block title %}Accueil | Patient{% endblock %}
+
+{% block body %}
+    {% include 'composants/header.html.twig' %}
+    <div style="width: 100%; display: flex; flex-direction: column; align-items: center">
+        <div id="calendar-holder" style="margin-top: 2%; height: 80%; width: 80%"></div>
+    </div>
+{% endblock %}
