@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset("../../css/searchBar.css") }}">
-    <link rel="stylesheet" href="{{ asset("../../css/homepage.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/searchBar.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/homepage.css") }}">
 {% endblock %}
 
 {% block javascripts %}
@@ -35,7 +35,7 @@
               <tr>
                 <th scope="row">{{ num }}</th>
                 <td>{{ log.first_name }} {{ log.last_name }}</td>
-                <td>{{ log.date|date('d/m/Y H:i')  }}</td>
+                <td>{{ log.date|date('d/m/Y H:i', "Europe/Paris")  }}</td>
                 <td>{{ log.action }}</td>
               </tr>
         {% endfor %}

@@ -37,7 +37,7 @@
                 <th scope="row">{{ num }}</th>
                 <td>{{ log.fn }} {{ log.ln }}</td>
                 <td>{{ log.first_name }} {{ log.last_name }}</td>
-                <td>{{ log.modification|date('d/m/Y H:i')  }}</td>
+                <td>{{ log.modification|date('d/m/Y H:i', "Europe/Paris")  }}</td>
                 <td>{% if log.action == 'creation' %}Création{% else %}Modification{% endif %}</td>
               </tr>
         {% endfor %}

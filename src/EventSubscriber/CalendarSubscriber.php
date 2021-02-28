@@ -9,6 +9,7 @@ use CalendarBundle\Entity\Event;
 use CalendarBundle\Event\CalendarEvent;
 use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -36,11 +37,17 @@ class CalendarSubscriber implements EventSubscriberInterface
         $end = $calendar->getEnd();
         $filters = $calendar->getFilters();
 
-        dump($start);
-        dump($end);
+        switch($filters['calendar-id']) {
+            case 'patient-calendar':
+                $this->fillPatientCalendar($calendar, $start, $end, $filters);
+                break;
+        }
+    }
 
-        $events = $this->em->getRepository(Meeting::class)->findByBetweenDates($start, $end);
-        dump($events);
+    public function fillPatientCalendar(CalendarEvent $calendar, DateTimeInterface $start, DateTimeInterface $end, array $filters)
+    {
+        date_default_timezone_set('Europe/Paris');
+        $events = $this->em->getRepository(Meeting::class)->findByBetweenDatesUnavailableEvents($start, $end);
 
         foreach ($events as $event) {
             $calendar->addEvent(new Event(
@@ -56,6 +63,16 @@ class CalendarSubscriber implements EventSubscriberInterface
                     'overlap' => false,
                     'display' => 'background'
                 ]
+            ));
+        }
+
+        $events = $this->em->getRepository(Meeting::class)->findByUserBetweenDatesEvents($start, $end);
+
+        foreach ($events as $event) {
+            $calendar->addEvent(new Event(
+                'Rendez-vous avec M. ' . $event->getDoctor()->getLastName(),
+                $event->getDate()->modify('-30 minutes'),
+                $event->getDate()->modify('+30 minutes')
             ));
         }
     }

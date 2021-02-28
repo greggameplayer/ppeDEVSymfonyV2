@@ -3,8 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Meeting;
+use App\Entity\Patient;
+use App\Entity\Status;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @method Meeting|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,8 +18,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MeetingRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var Security
+     */
+    private $security;
+
+    public function __construct(ManagerRegistry $registry, Security $security)
     {
+        $this->security = $security;
         parent::__construct($registry, Meeting::class);
     }
 
@@ -36,12 +46,34 @@ class MeetingRepository extends ServiceEntityRepository
     }
     */
 
-    public function findByBetweenDates($start, $end)
+    public function findByBetweenDatesUnavailableEvents($start, $end)
     {
         return $this->createQueryBuilder('q')
             ->where('q.date BETWEEN :from AND :to')
+            ->andWhere('q.status <> :statOne')
+            ->andWhere('q.status <> :statTwo')
+            ->andWhere('q.patient <> :patient')
             ->setParameter('from', $start->format('Y-m-d') )
             ->setParameter('to', $end->format('Y-m-d'))
+            ->setParameter('statOne', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 3]))
+            ->setParameter('statTwo', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 4]))
+            ->setParameter('patient', $this->getEntityManager()->getRepository(Patient::class)->findOneBy(['user' => $this->security->getUser()]))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByUserBetweenDatesEvents($start, $end)
+    {
+        return $this->createQueryBuilder('q')
+            ->where('q.date BETWEEN :from AND :to')
+            ->andWhere('q.status <> :statOne')
+            ->andWhere('q.status <> :statTwo')
+            ->andWhere('q.patient = :patient')
+            ->setParameter('from', $start->format('Y-m-d') )
+            ->setParameter('to', $end->format('Y-m-d'))
+            ->setParameter('statOne', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 3]))
+            ->setParameter('statTwo', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 4]))
+            ->setParameter('patient', $this->getEntityManager()->getRepository(Patient::class)->findOneBy(['user' => $this->security->getUser()]))
             ->getQuery()
             ->getResult();
     }

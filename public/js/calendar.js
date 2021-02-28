@@ -1,7 +1,9 @@
+let calendar;
+
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
 
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    calendar = new FullCalendar.Calendar(calendarEl, {
         defaultView: 'timeGridWeek',
         allDaySlot: false,
         selectable: false,
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 url: "/fc-load-events",
                 method: "POST",
                 extraParams: {
-                    filters: JSON.stringify({})
+                    filters: JSON.stringify({ "calendar-id": "patient-calendar" })
                 },
                 failure: () => {
                     // alert("There was an error while fetching FullCalendar!");
@@ -43,7 +45,41 @@ document.addEventListener('DOMContentLoaded', () => {
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
         },
         plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
-        timeZone: 'Europe/Paris',
+        dateClick: periodClick,
+        eventMouseEnter: function (info) {
+            if (info.event.rendering !== 'background') {
+                $(info.el.children[0]).append("<i class='fas fa-trash float-right mr-1 mt-1' style='color: red'></i>")
+            }
+        },
+        eventMouseLeave: function (info) {
+            if (info.event.rendering !== 'background') {
+                $(info.el.children[0].lastChild).remove()
+            }
+        }
     });
     calendar.render();
 });
+
+function periodClick (info) {
+    const date = moment(info.date)
+    if (isBackgroundEvent(info.jsEvent)) {
+        return
+    }
+
+    console.log(date)
+
+    fetch('/patient/event', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({'date': date})
+    })
+}
+
+function isBackgroundEvent (e) {
+    let elementMouseIsOver = document.elementFromPoint(e.clientX, e.clientY);
+
+    return (elementMouseIsOver.style.backgroundColor === 'rgb(217, 83, 79)');
+}
