@@ -25,6 +25,14 @@ class MeetingFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->persist($meeting);
 
+        $meeting = new Meeting();
+        $meeting->setDate(DateTime::createFromFormat("Y-m-d H:i:s", "2021-03-07 11:00:00"));
+        $meeting->setDoctor($manager->getRepository(Doctor::class)->findOneBy(['firstName' => 'Victor']));
+        $meeting->setPatient($manager->getRepository(Patient::class)->findOneBy(['socialSecurityNumber' => '12345678']));
+        $meeting->setStatus($manager->getRepository(Status::class)->findOneBy(['name' => 'Demandé']));
+
+        $manager->persist($meeting);
+
         $manager->flush();
     }
 
