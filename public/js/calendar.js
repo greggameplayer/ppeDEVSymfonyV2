@@ -1,5 +1,16 @@
 let calendar;
 
+$.extend({
+        redirectPost: function(location, args)
+        {
+            var form = '';
+            $.each( args, function( key, value ) {
+                form += '<input type="hidden" name="'+key+'" value="'+value+'">';
+            });
+            $('<form action="'+location+'" method="POST">'+form+'</form>').appendTo('body').submit();
+        }
+    });
+
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
 
@@ -46,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
         dateClick: periodClick,
+        eventClick: onEventClick,
         eventMouseEnter: function (info) {
             if (info.event.rendering !== 'background') {
                 $(info.el.children[0]).append("<i class='fas fa-trash float-right mr-1 mt-1' style='color: red'></i>")
@@ -61,25 +73,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function periodClick (info) {
-    const date = moment(info.date)
+    const date = moment(info.date).format('YYYY-MM-DD HH:mm:ss')
     if (isBackgroundEvent(info.jsEvent)) {
         return
     }
 
-    console.log(date)
-
-    fetch('/patient/event', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({'date': date})
-    })
+    $.redirectPost('/patient/event', {date: date});
 }
 
 function isBackgroundEvent (e) {
     let elementMouseIsOver = document.elementFromPoint(e.clientX, e.clientY);
 
     return (elementMouseIsOver.style.backgroundColor === 'rgb(217, 83, 79)');
+}
+
+function onEventClick (info) {
+    if (isBackgroundEvent(info.jsEvent)) {
+        return
+    }
+
+    const date = moment(info.event.start).utcOffset('+0000').format('YYYY-MM-DD HH:mm:ss')
+
+    axios.patch('/patient/event', {date: date})
+        .then((response) => {
+            console.log(response.data)
+            setTimeout(() => {
+                calendar.refetchEvents()
+            }, 200);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 }
