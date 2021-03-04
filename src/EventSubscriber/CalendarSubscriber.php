@@ -37,9 +37,12 @@ class CalendarSubscriber implements EventSubscriberInterface
         $end = $calendar->getEnd();
         $filters = $calendar->getFilters();
 
-        switch($filters['calendar-id']) {
+        switch ($filters['calendar-id']) {
             case 'patient-calendar':
                 $this->fillPatientCalendar($calendar, $start, $end, $filters);
+                break;
+            case 'secretary-calendar':
+                $this->fillSecretaryCalendar($calendar, $start, $end, $filters);
                 break;
         }
     }
@@ -73,6 +76,26 @@ class CalendarSubscriber implements EventSubscriberInterface
                 'Rendez-vous avec M. ' . $event->getDoctor()->getLastName(),
                 $event->getDate()->modify('-30 minutes'),
                 $event->getDate()->modify('+30 minutes')
+            ));
+        }
+    }
+
+    public function fillSecretaryCalendar(CalendarEvent $calendar, DateTimeInterface $start, DateTimeInterface $end, array $filters)
+    {
+        date_default_timezone_set('Europe/Paris');
+        $events = $this->em->getRepository(Meeting::class)->findByBetweenDatesEvents($start, $end);
+
+        foreach ($events as $event) {
+            $title = 'Rendez-vous de M. ' . $event->getPatient()->getLastName() . ' avec le docteur ' . $event->getDoctor()->getLastName();
+            $calendar->addEvent(new Event(
+                $title,
+                $event->getDate()->modify('-30 minutes'),
+                $event->getDate()->modify('+30 minutes'),
+                ['extendedProps' => [
+                    'isHTML' => true,
+                    'html' => '<div style="display: flex; flex-direction: row;"><a href="#">Any HTML here</a></div>',
+                    'eventStatus' => $event->getStatus()->getName()
+                ]]
             ));
         }
     }

@@ -62,6 +62,16 @@ class MeetingRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findByBetweenDatesEvents($start, $end)
+    {
+        return $this->createQueryBuilder('q')
+            ->where('q.date BETWEEN :from AND :to')
+            ->setParameter('from', $start->format('Y-m-d') )
+            ->setParameter('to', $end->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findByUserBetweenDatesEvents($start, $end)
     {
         return $this->createQueryBuilder('q')

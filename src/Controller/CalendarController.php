@@ -56,4 +56,14 @@ class CalendarController extends AbstractController
             return $this->json([], 500);
         }
     }
+
+    /**
+     * @Route("/secretary", name="secretaryIndex")
+     * @param Request $request
+     * @return Response
+     */
+    public function secretaryIndex(Request $request): Response
+    {
+        return $this->render('secretary/index.html.twig');
+    }
 }

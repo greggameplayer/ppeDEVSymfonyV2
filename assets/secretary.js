@@ -1,21 +1,17 @@
-let calendar;
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPluign from '@fullcalendar/interaction';
+import locales from '@fullcalendar/core/locales-all';
+import './styles/secretary.css';
 
-$.extend({
-        redirectPost: function(location, args)
-        {
-            var form = '';
-            $.each( args, function( key, value ) {
-                form += '<input type="hidden" name="'+key+'" value="'+value+'">';
-            });
-            $('<form action="'+location+'" method="POST">'+form+'</form>').appendTo('body').submit();
-        }
-    });
+let calendar;
 
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
 
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        defaultView: 'timeGridWeek',
+    calendar = new Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
         allDaySlot: false,
         selectable: false,
         eventDurationEditable: false,
@@ -26,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return event.rendering === 'background' || event.display === 'background'
         },
         height: 'auto',
+        locales: locales,
         locale: 'fr',
         editable: false,
         slotMinTime: '09:00:00',
@@ -43,31 +40,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 url: "/fc-load-events",
                 method: "POST",
                 extraParams: {
-                    filters: JSON.stringify({ "calendar-id": "patient-calendar" })
+                    filters: JSON.stringify({ "calendar-id": "secretary-calendar" })
                 },
                 failure: () => {
                     // alert("There was an error while fetching FullCalendar!");
                 },
             },
         ],
-        header: {
+        headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
         },
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
-        dateClick: periodClick,
-        eventClick: onEventClick,
-        eventMouseEnter: function (info) {
-            if (info.event.rendering !== 'background') {
-                $(info.el.children[0]).append("<i class='fas fa-trash float-right mr-1 mt-1' style='color: red'></i>")
+        plugins: [ timeGridPlugin, dayGridPlugin, interactionPluign ], // https://fullcalendar.io/docs/plugin-index
+        eventContent: function(arg) {
+            let divEl = document.createElement('div')
+            divEl.style.display = 'flex';
+            divEl.style.flexDirection = 'column';
+            let htmlTitle = arg.event._def.extendedProps['html'];
+            if (arg.event.extendedProps.isHTML) {
+                divEl.innerHTML = `<span>${arg.timeText}</span>`
+                divEl.innerHTML += `<span>${arg.event.title}</span>`
+                divEl.innerHTML += htmlTitle
+            } else {
+                divEl.innerHTML = arg.event.title
             }
+            let arrayOfDomNodes = [ divEl ]
+            return { domNodes: arrayOfDomNodes }
         },
-        eventMouseLeave: function (info) {
-            if (info.event.rendering !== 'background') {
-                $(info.el.children[0].lastChild).remove()
-            }
-        }
+        eventMinHeight: 60
     });
     calendar.render();
 });
