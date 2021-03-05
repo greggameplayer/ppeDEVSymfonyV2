@@ -1,21 +1,27 @@
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import locales from '@fullcalendar/core/locales-all';
+
 let calendar;
 
 $.extend({
-        redirectPost: function(location, args)
-        {
-            var form = '';
-            $.each( args, function( key, value ) {
-                form += '<input type="hidden" name="'+key+'" value="'+value+'">';
-            });
-            $('<form action="'+location+'" method="POST">'+form+'</form>').appendTo('body').submit();
-        }
-    });
+    redirectPost: function(location, args)
+    {
+        var form = '';
+        $.each( args, function( key, value ) {
+            form += '<input type="hidden" name="'+key+'" value="'+value+'">';
+        });
+        $('<form action="'+location+'" method="POST">'+form+'</form>').appendTo('body').submit();
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
 
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        defaultView: 'timeGridWeek',
+    calendar = new Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
         allDaySlot: false,
         selectable: false,
         eventDurationEditable: false,
@@ -23,9 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
         slotDuration: '00:30:00',
         defaultTimedEventDuration: '00:30:00',
         selectOverlap (event) {
-            return event.rendering === 'background' || event.display === 'background'
+            return event.display === 'background'
         },
         height: 'auto',
+        locales: locales,
         locale: 'fr',
         editable: false,
         slotMinTime: '09:00:00',
@@ -50,22 +57,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
             },
         ],
-        header: {
+        headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
         },
-        plugins: [ 'interaction', 'dayGrid', 'timeGrid' ], // https://fullcalendar.io/docs/plugin-index
+        plugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin ], // https://fullcalendar.io/docs/plugin-index
         dateClick: periodClick,
         eventClick: onEventClick,
         eventMouseEnter: function (info) {
-            if (info.event.rendering !== 'background') {
-                $(info.el.children[0]).append("<i class='fas fa-trash float-right mr-1 mt-1' style='color: red'></i>")
+            if (info.event.display !== 'background') {
+                $(info.el.children[0].children[0]).append("<i class='fas fa-trash float-right mr-1 mt-1' style='color: red'></i>")
             }
         },
         eventMouseLeave: function (info) {
-            if (info.event.rendering !== 'background') {
-                $(info.el.children[0].lastChild).remove()
+            if (info.event.display !== 'background') {
+                $(info.el.children[0].children[0].lastChild).remove()
             }
         }
     });
@@ -96,10 +103,7 @@ function onEventClick (info) {
 
     axios.patch('/patient/event', {date: date})
         .then((response) => {
-            console.log(response.data)
-            setTimeout(() => {
-                calendar.refetchEvents()
-            }, 200);
+            calendar.refetchEvents()
         })
         .catch((error) => {
             console.log(error);

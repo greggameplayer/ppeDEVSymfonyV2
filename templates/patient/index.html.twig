@@ -2,20 +2,13 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{asset("css/homepage.css")}}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.css">
+    {{ encore_entry_link_tags('patient') }}
 {% endblock %}
 
 {% block javascripts %}
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
     <script src='https://cdn.jsdelivr.net/npm/moment@2.27.0/min/moment.min.js' defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/main.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.1.0/main.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.1.0/main.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@4.1.0/main.min.js" defer></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.1.0/locales-all.js' defer></script>
-    <script src="{{ asset('js/calendar.js') }}" defer></script>
+    {{ encore_entry_script_tags('patient') }}
 {% endblock %}
 
 

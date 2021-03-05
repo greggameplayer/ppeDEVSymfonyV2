@@ -87,15 +87,40 @@ class CalendarSubscriber implements EventSubscriberInterface
 
         foreach ($events as $event) {
             $title = 'Rendez-vous de M. ' . $event->getPatient()->getLastName() . ' avec le docteur ' . $event->getDoctor()->getLastName();
+
+            $color = ''; $html = '';
+
+            switch ($event->getStatus()->getName()) {
+                case 'Annulé':
+                    $color = '#5309be';
+                    break;
+                case 'Réalisé':
+                    $color = '#11ff00';
+                    break;
+                case 'Confirmé':
+                    $color = '#ff6f00';
+                    break;
+                case 'Refusé':
+                    $color = '#ff0000';
+                    break;
+                case 'Demandé':
+                    $html = '<div style="display: flex; flex-direction: row;" class="mt-1"><i class="fas fa-2x fa-calendar-check validate mr-2 ml-1"></i><i class="fas fa-2x fa-calendar-times refuse"></i></div>';
+                    $color = '#ecba26';
+                    break;
+            }
             $calendar->addEvent(new Event(
                 $title,
                 $event->getDate()->modify('-30 minutes'),
                 $event->getDate()->modify('+30 minutes'),
-                ['extendedProps' => [
-                    'isHTML' => true,
-                    'html' => '<div style="display: flex; flex-direction: row;"><a href="#">Any HTML here</a></div>',
-                    'eventStatus' => $event->getStatus()->getName()
-                ]]
+                [
+                    'extendedProps' => [
+                        'isHTML' => true,
+                        'html' => $html,
+                        'eventStatus' => $event->getStatus()->getName()
+                    ],
+                    'backgroundColor' => $color,
+                    'borderColor' => $color
+                ]
             ));
         }
     }

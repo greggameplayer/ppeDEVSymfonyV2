@@ -66,4 +66,29 @@ class CalendarController extends AbstractController
     {
         return $this->render('secretary/index.html.twig');
     }
+
+    /**
+     * @Route("/secretary/event", name="modifyEventStatus", methods={"PATCH"})
+     * @param Request $request
+     * @return Response
+     */
+    public function modifyEventStatus(Request $request): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $meeting = $this->getDoctrine()->getRepository(Meeting::class)->findOneByDateWithoutInactive(json_decode($request->getContent())->date);
+
+        $meeting->setStatus($this->getDoctrine()->getRepository(Status::class)->findOneBy(['id' => json_decode($request->getContent())->status]));
+
+        $em->persist($meeting);
+        $em->flush();
+
+        if ($meeting->getStatus()->getId() == json_decode($request->getContent())->status) {
+            return $this->json([]);
+        } else {
+            return $this->json(['message' => 'le status demandé n\'existe pas'], 400);
+        }
+
+
+    }
 }

@@ -37,6 +37,11 @@ class StatusFixtures extends Fixture
 
         $manager->persist($status);
 
+        $status = new Status();
+        $status->setName('Inactif');
+
+        $manager->persist($status);
+
         $manager->flush();
     }
 }

@@ -52,22 +52,37 @@ class MeetingRepository extends ServiceEntityRepository
             ->where('q.date BETWEEN :from AND :to')
             ->andWhere('q.status <> :statOne')
             ->andWhere('q.status <> :statTwo')
+            ->andWhere('q.status <> :statThree')
             ->andWhere('q.patient <> :patient')
             ->setParameter('from', $start->format('Y-m-d') )
             ->setParameter('to', $end->format('Y-m-d'))
             ->setParameter('statOne', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 3]))
             ->setParameter('statTwo', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 4]))
+            ->setParameter('statThree', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 6]))
             ->setParameter('patient', $this->getEntityManager()->getRepository(Patient::class)->findOneBy(['user' => $this->security->getUser()]))
             ->getQuery()
             ->getResult();
+    }
+
+    public function findOneByDateWithoutInactive($date)
+    {
+        return $this->createQueryBuilder('q')
+            ->where('q.date = :date')
+            ->andWhere('q.status <> :stat')
+            ->setParameter('date', $date)
+            ->setParameter('stat', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 6]))
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     public function findByBetweenDatesEvents($start, $end)
     {
         return $this->createQueryBuilder('q')
             ->where('q.date BETWEEN :from AND :to')
+            ->andWhere('q.status <> :stat')
             ->setParameter('from', $start->format('Y-m-d') )
             ->setParameter('to', $end->format('Y-m-d'))
+            ->setParameter('stat', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 6]))
             ->getQuery()
             ->getResult();
     }
@@ -78,11 +93,13 @@ class MeetingRepository extends ServiceEntityRepository
             ->where('q.date BETWEEN :from AND :to')
             ->andWhere('q.status <> :statOne')
             ->andWhere('q.status <> :statTwo')
+            ->andWhere('q.status <> :statThree')
             ->andWhere('q.patient = :patient')
             ->setParameter('from', $start->format('Y-m-d') )
             ->setParameter('to', $end->format('Y-m-d'))
             ->setParameter('statOne', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 3]))
             ->setParameter('statTwo', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 4]))
+            ->setParameter('statThree', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 6]))
             ->setParameter('patient', $this->getEntityManager()->getRepository(Patient::class)->findOneBy(['user' => $this->security->getUser()]))
             ->getQuery()
             ->getResult();

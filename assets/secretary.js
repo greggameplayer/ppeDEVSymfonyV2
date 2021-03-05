@@ -1,11 +1,11 @@
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPluign from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction';
 import locales from '@fullcalendar/core/locales-all';
 import './styles/secretary.css';
 
-let calendar;
+let calendar, currentEvent;
 
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 failure: () => {
                     // alert("There was an error while fetching FullCalendar!");
-                },
+                }
             },
         ],
         headerToolbar: {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay',
         },
-        plugins: [ timeGridPlugin, dayGridPlugin, interactionPluign ], // https://fullcalendar.io/docs/plugin-index
+        plugins: [ timeGridPlugin, dayGridPlugin, interactionPlugin ], // https://fullcalendar.io/docs/plugin-index
         eventContent: function(arg) {
             let divEl = document.createElement('div')
             divEl.style.display = 'flex';
@@ -62,13 +62,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 divEl.innerHTML = `<span>${arg.timeText}</span>`
                 divEl.innerHTML += `<span>${arg.event.title}</span>`
                 divEl.innerHTML += htmlTitle
+
+                if (divEl.children[2] !== undefined) {
+                    if(divEl.children[2].children[0].classList.contains('validate')) {
+                            divEl.children[2].children[0].addEventListener('click', onClickValidate);
+                    }
+                }
             } else {
                 divEl.innerHTML = arg.event.title
             }
             let arrayOfDomNodes = [ divEl ]
+
             return { domNodes: arrayOfDomNodes }
         },
-        eventMinHeight: 60
+        eventMinHeight: 60,
+        eventMouseEnter: function (info) {
+            currentEvent = info.event
+        },
+        eventMouseLeave: function (info) {
+            currentEvent = undefined
+        }
     });
     calendar.render();
 });
@@ -101,6 +114,17 @@ function onEventClick (info) {
             setTimeout(() => {
                 calendar.refetchEvents()
             }, 200);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
+
+function onClickValidate (_e) {
+    const date = moment(currentEvent.start).utcOffset('+0000').format('YYYY-MM-DD HH:mm:ss')
+    axios.patch('/secretary/event', {date: date, status: 2})
+        .then((response) => {
+            calendar.refetchEvents()
         })
         .catch((error) => {
             console.log(error);
