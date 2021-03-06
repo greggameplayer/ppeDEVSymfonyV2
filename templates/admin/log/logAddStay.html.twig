@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset("../../css/searchBar.css") }}">
-    <link rel="stylesheet" href="{{ asset("../../css/homepage.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/searchBar.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/homepage.css") }}">
 {% endblock %}
 
 
@@ -35,9 +35,9 @@
                 <th scope="row">{{ num }}</th>
                 <td>{{ log.fn }} {{ log.ln }}</td>
                 <td>{{ log.first_name }} {{ log.last_name }}</td>
-                <td>{{ log.entry_date|date('d/m/Y H:i') }}</td>
-                <td>{{ log.leave_date|date('d/m/Y H:i') }}</td>
-                <td>{{ log.modification|date('d/m/Y H:i') }}</td>
+                <td>{{ log.entry_date|date('d/m/Y H:i', "Europe/Paris") }}</td>
+                <td>{{ log.leave_date|date('d/m/Y H:i', "Europe/Paris") }}</td>
+                <td>{{ log.modification|date('d/m/Y H:i', "Europe/Paris") }}</td>
                 <td>{% if log.action == "modification" %} Modification {% elseif log.action == "suppression" %} Suppression {% elseif log.action == "creation" %} Création {% else %} Réactivation{% endif %}</td>
               </tr>
         {% endfor %}

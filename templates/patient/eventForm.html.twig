@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{asset("css/homepage.css")}}">
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
+
+
+{% block title %}Prendre rendez-vous{% endblock %}
+
+{% block body %}
+    {% include 'composants/header.html.twig' %}
+    {{ date | date('Y-m-d H:i:s') }}
+{% endblock %}

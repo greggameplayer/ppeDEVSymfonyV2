@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{asset("css/homepage.css")}}">
+    {{ encore_entry_link_tags('secretary') }}
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js" defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/moment@2.27.0/min/moment.min.js' defer></script>
+    {{ encore_entry_script_tags('secretary') }}
+{% endblock %}
+
+
+{% block title %}Accueil | Secrétaire{% endblock %}
+
+{% block body %}
+    {% include 'composants/header.html.twig' %}
+    <div class="calendar-container mt-2 mr-auto ml-auto">
+        <div id="calendar-holder" style="height: 80%;"></div>
+    </div>
+{% endblock %}
