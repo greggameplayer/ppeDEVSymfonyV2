@@ -72,10 +72,41 @@ class CalendarSubscriber implements EventSubscriberInterface
         $events = $this->em->getRepository(Meeting::class)->findByUserBetweenDatesEvents($start, $end);
 
         foreach ($events as $event) {
+            $color = ''; $deletable = false;
+
+            switch ($event->getStatus()->getName()) {
+                case 'Annulé':
+                    $color = '#5309be';
+                    break;
+                case 'Réalisé':
+                    $color = '#11ff00';
+                    break;
+                case 'Confirmé':
+                    $deletable = true;
+                    $color = '#ff6f00';
+                    break;
+                case 'Refusé':
+                    $color = '#ff0000';
+                    break;
+                case 'Demandé':
+                    $deletable = true;
+                    $color = '#ecba26';
+                    break;
+            }
+
             $calendar->addEvent(new Event(
                 'Rendez-vous avec M. ' . $event->getDoctor()->getLastName(),
                 $event->getDate()->modify('-30 minutes'),
-                $event->getDate()->modify('+30 minutes')
+                $event->getDate()->modify('+30 minutes'),
+                [
+                    'backgroundColor' => $color,
+                    'borderColor' => $color,
+                    'extendedProps' => [
+                        'isHTML' => true,
+                        'deletable' => $deletable,
+                        'status' => $event->getStatus()->getName()
+                    ]
+                ]
             ));
         }
     }
@@ -92,19 +123,22 @@ class CalendarSubscriber implements EventSubscriberInterface
 
             switch ($event->getStatus()->getName()) {
                 case 'Annulé':
+                    $html = '<div style="display: flex; flex-direction: row;" class="mt-auto mb-1"><i class="fas fa-2x fa-calendar-minus delete ml-1"></i></div>';
                     $color = '#5309be';
                     break;
                 case 'Réalisé':
                     $color = '#11ff00';
                     break;
                 case 'Confirmé':
+                    $html = '<div style="display: flex; flex-direction: row;" class="mt-auto mb-1"><i class="fas fa-2x fa-calendar-check realized mr-2 ml-1"></i><i class="fas fa-2x fa-calendar-times notRealized"></i></div>';
                     $color = '#ff6f00';
                     break;
                 case 'Refusé':
+                    $html = '<div style="display: flex; flex-direction: row;" class="mt-auto mb-1"><i class="fas fa-2x fa-calendar-minus delete redDelete ml-1"></i></div>';
                     $color = '#ff0000';
                     break;
                 case 'Demandé':
-                    $html = '<div style="display: flex; flex-direction: row;" class="mt-1"><i class="fas fa-2x fa-calendar-check validate mr-2 ml-1"></i><i class="fas fa-2x fa-calendar-times refuse"></i></div>';
+                    $html = '<div style="display: flex; flex-direction: row;" class="mt-auto mb-1"><i class="fas fa-2x fa-calendar-check validate mr-2 ml-1"></i><i class="fas fa-2x fa-calendar-times refuse"></i></div>';
                     $color = '#ecba26';
                     break;
             }

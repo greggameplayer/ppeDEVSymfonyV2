@@ -57,15 +57,27 @@ document.addEventListener('DOMContentLoaded', () => {
             let divEl = document.createElement('div')
             divEl.style.display = 'flex';
             divEl.style.flexDirection = 'column';
+            divEl.style.height = '100%';
             let htmlTitle = arg.event._def.extendedProps['html'];
             if (arg.event.extendedProps.isHTML) {
                 divEl.innerHTML = `<span>${arg.timeText}</span>`
                 divEl.innerHTML += `<span>${arg.event.title}</span>`
+                divEl.innerHTML += `<span>Status : ${arg.event.extendedProps.eventStatus}</span>`
                 divEl.innerHTML += htmlTitle
 
-                if (divEl.children[2] !== undefined) {
-                    if(divEl.children[2].children[0].classList.contains('validate')) {
-                            divEl.children[2].children[0].addEventListener('click', onClickValidate);
+                if (divEl.children[3] !== undefined) {
+                    if (divEl.children[3].children[0].classList.contains('validate')) {
+                        divEl.children[3].children[0].addEventListener('click', () => {changeStatus(2)});
+                    } else if (divEl.children[3].children[0].classList.contains('delete')) {
+                        divEl.children[3].children[0].addEventListener('click', () => {changeStatus(6)});
+                    } else if (divEl.children[3].children[0].classList.contains('realized')) {
+                        divEl.children[3].children[0].addEventListener('click', () => {changeStatus(5)});
+                    }
+
+                    if (divEl.children[3].children[1] !== undefined && divEl.children[3].children[1].classList.contains('refuse')) {
+                        divEl.children[3].children[1].addEventListener('click', () => {changeStatus(4)});
+                    } else if (divEl.children[3].children[1] !== undefined && divEl.children[3].children[1].classList.contains('notRealized')) {
+                        divEl.children[3].children[1].addEventListener('click', () => {changeStatus(6)});
                     }
                 }
             } else {
@@ -75,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return { domNodes: arrayOfDomNodes }
         },
-        eventMinHeight: 60,
+        eventMinHeight: 100,
         eventMouseEnter: function (info) {
             currentEvent = info.event
         },
@@ -120,9 +132,9 @@ function onEventClick (info) {
         });
 }
 
-function onClickValidate (_e) {
+function changeStatus (status) {
     const date = moment(currentEvent.start).utcOffset('+0000').format('YYYY-MM-DD HH:mm:ss')
-    axios.patch('/secretary/event', {date: date, status: 2})
+    axios.patch('/secretary/event', {date: date, status: status})
         .then((response) => {
             calendar.refetchEvents()
         })

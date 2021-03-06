@@ -1,0 +1,28 @@
+.fc-timegrid-slot {
+    height: 5em !important;
+    border-bottom: 0 !important;
+}
+
+.fc-event-main {
+    display: flex;
+    flex-direction: row;
+}
+
+.trash:hover {
+    color: darkgrey;
+}
+
+.calendar-container {
+    width: 80%;
+    overflow-x: auto;
+}
+
+@media only screen and (max-width:680px) {
+    .calendar-container .fc-view > table {
+        width: 100em;
+    }
+
+    .calendar-container .fc-toolbar.fc-header-toolbar {
+        width: 100em;
+    }
+}

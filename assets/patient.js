@@ -3,8 +3,9 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import locales from '@fullcalendar/core/locales-all';
+import './styles/patient.css';
 
-let calendar;
+let calendar, currentEvent;
 
 $.extend({
     redirectPost: function(location, args)
@@ -60,20 +61,47 @@ document.addEventListener('DOMContentLoaded', () => {
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            right: '',
         },
         plugins: [ interactionPlugin, dayGridPlugin, timeGridPlugin ], // https://fullcalendar.io/docs/plugin-index
         dateClick: periodClick,
-        eventClick: onEventClick,
-        eventMouseEnter: function (info) {
-            if (info.event.display !== 'background') {
-                $(info.el.children[0].children[0]).append("<i class='fas fa-trash float-right mr-1 mt-1' style='color: red'></i>")
+        eventContent: function(arg) {
+            let divEl = document.createElement('div')
+            let arrayOfDomNodes = []
+            if (arg.event.display !== 'background') {
+                let trashDiv = document.createElement('div')
+                trashDiv.style.height = '100%';
+                trashDiv.style.width = '40%';
+                trashDiv.style.justifyContent = 'flex-end';
+                trashDiv.style.alignItems = 'center';
+                trashDiv.style.display = 'flex';
+                trashDiv.innerHTML = "<i class='fas fa-2x fa-trash trash mr-1'></i>";
+                trashDiv.addEventListener("click", onTrashClick);
+                arrayOfDomNodes = [divEl, trashDiv];
+            } else {
+                arrayOfDomNodes = [divEl];
             }
+            divEl.style.display = 'flex';
+            divEl.style.flexDirection = 'column';
+            let htmlTitle = arg.event._def.extendedProps['html'];
+            if (arg.event.extendedProps.isHTML) {
+                divEl.innerHTML = `<span>${arg.timeText}</span>`
+                divEl.innerHTML += `<span>${arg.event.title}</span>`
+                divEl.innerHTML += `<span>Status : ${arg.event.extendedProps.status}</span>`
+            } else {
+                divEl.innerHTML = arg.event.title
+            }
+
+
+            return { domNodes: arrayOfDomNodes }
+        },
+        eventMinHeight: 60,
+        slotMinWidth: 600,
+        eventMouseEnter: function (info) {
+            currentEvent = info
         },
         eventMouseLeave: function (info) {
-            if (info.event.display !== 'background') {
-                $(info.el.children[0].children[0].lastChild).remove()
-            }
+            currentEvent = undefined
         }
     });
     calendar.render();
@@ -94,12 +122,8 @@ function isBackgroundEvent (e) {
     return (elementMouseIsOver.style.backgroundColor === 'rgb(217, 83, 79)');
 }
 
-function onEventClick (info) {
-    if (isBackgroundEvent(info.jsEvent)) {
-        return
-    }
-
-    const date = moment(info.event.start).utcOffset('+0000').format('YYYY-MM-DD HH:mm:ss')
+function onTrashClick () {
+    const date = moment(currentEvent.event.start).utcOffset('+0000').format('YYYY-MM-DD HH:mm:ss')
 
     axios.patch('/patient/event', {date: date})
         .then((response) => {
