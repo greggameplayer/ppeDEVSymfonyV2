@@ -30,8 +30,13 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            
-            return $this->redirectToRoute('homepagePatient');
+            if (in_array(["ROLE_USER", "ROLE_ADMIN"], $this->getUser()->getRoles())) {
+                return $this->redirectToRoute('homepagePatient');
+            } elseif (in_array("ROLE_SECRETARY", $this->getUser()->getRoles())) {
+                return $this->redirectToRoute('secretaryIndex');
+            } elseif (in_array("ROLE_PATIENT", $this->getUser()->getRoles())) {
+                return $this->redirectToRoute('patientIndex');
+            }
         }
 
         // get the login error if there is one
