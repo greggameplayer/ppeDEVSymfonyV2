@@ -4,9 +4,11 @@
 namespace App\Controller;
 
 
+use App\Entity\Doctor;
 use App\Entity\Meeting;
 use App\Entity\Patient;
 use App\Entity\Status;
+use App\Form\EventType;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +34,12 @@ class CalendarController extends AbstractController
      */
     public function createEvent(Request $request): Response
     {
-        return $this->render('patient/eventForm.html.twig', ['date' => $request->get('date'), 'route' => "patientIndex"]);
+        $meeting = new Meeting();
+        $meeting->setDate(DateTime::createFromFormat("Y-m-d H:i:s", $request->get("date")));
+        $form =  $this->createForm(EventType::class, $meeting);
+        $form->handleRequest($request);
+
+        return $this->render('patient/eventForm.html.twig', ['date' => $request->get('date'), 'route' => "patientIndex", "form" => $form->createView()]);
     }
 
     /**

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{asset("css/homepage.css")}}">
+    <link rel="stylesheet" href="{{asset("../css/form.css")}}">
 {% endblock %}
 
 {% block javascripts %}
@@ -12,5 +12,13 @@
 
 {% block body %}
     {% include 'composants/header.html.twig' %}
-    {{ date | date('Y-m-d H:i:s') }}
+    <div class="d-flex justify-content-center">
+        {{ form_start(form, {'attr':{'class':'w-75 d-flex flex-column'}} )}}
+        {{ form_row(form.date) }}
+        {{ form_row(form.doctor) }}
+        <div class="mt-4 d-flex justify-content-center w-100 button">
+            {{ form_row(form.demander)}}
+        </div>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}
