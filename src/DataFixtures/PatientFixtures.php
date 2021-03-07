@@ -23,7 +23,7 @@ class PatientFixtures extends Fixture
 
         $user->setPassword('$2y$10\$mBysVD3ACbCV6HyJQW/qSuC2IzgF34lsNsFXwC4keSvOGH.s1EKsK');
         $user->setLogin('jad.daouk');
-        $user->setRoles([]);
+        $user->setRoles(['ROLE_PATIENT']);
 
         $patient->setUser($user);
 
@@ -41,7 +41,7 @@ class PatientFixtures extends Fixture
 
         $user->setPassword('$2y$10\$mBysVD3ACbCV6HyJQW/qSuC2IzgF34lsNsFXwC4keSvOGH.s1EKsK');
         $user->setLogin('greg.patient');
-        $user->setRoles([]);
+        $user->setRoles(['ROLE_PATIENT']);
 
         $patient->setUser($user);
 
