@@ -22,7 +22,7 @@ class CalendarController extends AbstractController
      */
     public function patientIndex(Request $request): Response
     {
-        return $this->render('patient/index.html.twig');
+        return $this->render('patient/index.html.twig', ['route' => "patientIndex"]);
     }
 
     /**
@@ -32,7 +32,7 @@ class CalendarController extends AbstractController
      */
     public function createEvent(Request $request): Response
     {
-        return $this->render('patient/eventForm.html.twig', ['date' => $request->get('date')]);
+        return $this->render('patient/eventForm.html.twig', ['date' => $request->get('date'), 'route' => "patientIndex"]);
     }
 
     /**
@@ -64,7 +64,7 @@ class CalendarController extends AbstractController
      */
     public function secretaryIndex(Request $request): Response
     {
-        return $this->render('secretary/index.html.twig');
+        return $this->render('secretary/index.html.twig', ['route' => "secretaryIndex"]);
     }
 
     /**
