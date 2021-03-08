@@ -11,3 +11,5 @@ import './styles/app.css';
 // start the Stimulus application
 import './bootstrap';
 
+import 'popper.js';
+import 'bootstrap';
