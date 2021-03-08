@@ -62,6 +62,8 @@ class StaffController extends AbstractController
             $em->persist($user);
             $em->persist($staff);
             $em->flush();
+
+
             return $this->redirectToRoute('homepageStaff');
         }
 

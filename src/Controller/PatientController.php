@@ -92,7 +92,7 @@ class PatientController extends AbstractController
         ]);
     }
 
-    private function loggerPatient($patient, $action)
+    public function loggerPatient($patient, $action)
     {
         $manage = new Manage();
         $manage->setIdPatient($patient);

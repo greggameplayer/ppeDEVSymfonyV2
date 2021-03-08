@@ -7,6 +7,13 @@
         <a class="navbar-brand ml-4">Connexion</a>
     </nav>
 
+    {% if accountCreated is not null %}
+        <div class="alert alert-success text-center"><p>Votre compte a bien été créé</p></div>
+    {% endif %}
+
+    {% if socialNumber is not null %}
+        <div class="alert alert-danger"><p>Un patient avec ce numéro de sécurité sociale existe déjà dans nos services. Si vous ne vous rappelez plus de vos identifiants veuillez nous contacter via le serivce de demande d'assistance situé en bas de page à droite.</p></div>
+    {% endif %}
     
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -26,8 +33,8 @@
             <div class="w-100" align="center">
                 <div class="form-signin login">
                     <label for="inputLogin" class="h5">Identifiant:</label>
-                    <input type="text" value="{{ last_username }}" name="login" id="inputLogin" class="form-control" required autofocus>
-                    <label for="inputPassword" class="mt-4 h5">Mot de passe:</label>
+                    <input type="text" value="{% if email is not null %} {{ email }}{% endif %}" name="login" id="inputLogin" class="form-control" required autofocus>
+                    <label for="inputPassword" class="mt-4 h5"  >Mot de passe:</label>
                     <input type="password" name="password" id="inputPassword" class="form-control" required>
 
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -38,4 +45,12 @@
         </div>
     </div>  
 </form>
+
+
+    <div class="mb-3 w-5" align="center">
+        <div class="w-50" align="center">
+            <a href="{{ path('checkSocialSecurityNumber') }}"  class="btn btn-primary mt-4 w-50" >Inscription Patient</a>
+        </div>
+    </div>
+
 {% endblock %}
