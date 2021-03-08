@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            right: 'timeGridWeek,timeGridDay',
         },
         plugins: [ timeGridPlugin, dayGridPlugin, interactionPlugin ], // https://fullcalendar.io/docs/plugin-index
         eventContent: function(arg) {
