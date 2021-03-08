@@ -21,7 +21,7 @@ class PatientUserType extends AbstractType
     {
         $builder
             ->add('login', EmailType::class, [
-                "label" => "Identifiant :",
+                "label" => "Email :",
                 "label_attr" => [
                     "class" => "h3 ml-4 mb-0"
                 ],
