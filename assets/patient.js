@@ -95,8 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return { domNodes: arrayOfDomNodes }
         },
-        eventMinHeight: 60,
-        slotMinWidth: 600,
         eventMouseEnter: function (info) {
             currentEvent = info
         },

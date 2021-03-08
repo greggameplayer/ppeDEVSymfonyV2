@@ -17,7 +17,14 @@
     overflow-x: auto;
 }
 
-@media only screen and (max-width:680px) {
+.fc-timegrid-event-harness {
+    width: 104%;
+    height: 4.5rem;
+    margin-left: -0.24rem;
+    border-radius: 0;
+}
+
+@media only screen and (max-width:1080px) {
     .calendar-container .fc-view > table {
         width: 100em;
     }

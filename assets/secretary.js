@@ -10,6 +10,20 @@ let calendar, currentEvent;
 document.addEventListener('DOMContentLoaded', () => {
     var calendarEl = document.getElementById('calendar-holder');
 
+    $("#doctorSelector" ).on('change', function () {
+        calendar.removeAllEventSources();
+        calendar.addEventSource({
+            url: "/fc-load-events",
+            method: "POST",
+            extraParams: {
+                filters: JSON.stringify({ "calendar-id": "secretary-calendar", "doctor": $("#doctorSelector option:selected" ).val() })
+            },
+            failure: () => {
+                // alert("There was an error while fetching FullCalendar!");
+            }
+        })
+    })
+
     calendar = new Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         allDaySlot: false,
@@ -40,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 url: "/fc-load-events",
                 method: "POST",
                 extraParams: {
-                    filters: JSON.stringify({ "calendar-id": "secretary-calendar" })
+                    filters: JSON.stringify({ "calendar-id": "secretary-calendar", "doctor": $("#doctorSelector option:selected" ).val() })
                 },
                 failure: () => {
                     // alert("There was an error while fetching FullCalendar!");

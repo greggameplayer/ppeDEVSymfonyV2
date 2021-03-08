@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{asset("css/homepage.css")}}">
+    <link rel="stylesheet" href="{{ asset("css/homepage.css") }}">
     {{ encore_entry_link_tags('secretary') }}
 {% endblock %}
 
@@ -16,6 +16,14 @@
 
 {% block body %}
     {% include 'composants/header.html.twig' %}
+    <div class="form-group mt-2 w-50 text-center mx-auto">
+        <label for="doctorSelector">Calendrier du docteur :</label>
+        <select class="form-control" name="doctorSelector" id="doctorSelector" required>
+            {% for doctor in doctors %}
+                <option value="{{ doctor.lastName }}">{{ doctor.lastName }}  {{ doctor.firstName }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div class="calendar-container mt-2 mr-auto ml-auto">
         <div id="calendar-holder" style="height: 80%;"></div>
     </div>

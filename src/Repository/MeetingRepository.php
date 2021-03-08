@@ -73,14 +73,16 @@ class MeetingRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findByBetweenDatesEvents($start, $end)
+    public function findByBetweenDatesEvents($start, $end, $doctor)
     {
         return $this->createQueryBuilder('q')
             ->where('q.date BETWEEN :from AND :to')
             ->andWhere('q.status <> :stat')
+            ->andWhere('q.doctor = :doctor')
             ->setParameter('from', $start->format('Y-m-d') )
             ->setParameter('to', $end->format('Y-m-d'))
             ->setParameter('stat', $this->getEntityManager()->getRepository(Status::class)->findOneBy(['id' => 6]))
+            ->setParameter('doctor', $doctor)
             ->getQuery()
             ->getResult();
     }
