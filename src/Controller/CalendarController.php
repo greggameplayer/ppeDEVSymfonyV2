@@ -4,6 +4,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Doctor;
 use App\Entity\Meeting;
 use App\Entity\Patient;
 use App\Entity\Status;
@@ -64,7 +65,7 @@ class CalendarController extends AbstractController
      */
     public function secretaryIndex(Request $request): Response
     {
-        return $this->render('secretary/index.html.twig', ['route' => "secretaryIndex"]);
+        return $this->render('secretary/index.html.twig', ['route' => "secretaryIndex", 'doctors' => $this->getDoctrine()->getRepository(Doctor::class)->findAll()]);
     }
 
     /**

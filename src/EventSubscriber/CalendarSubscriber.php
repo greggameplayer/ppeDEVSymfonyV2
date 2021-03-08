@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Doctor;
 use App\Entity\Meeting;
 use App\Entity\Status;
 use CalendarBundle\CalendarEvents;
@@ -114,7 +115,8 @@ class CalendarSubscriber implements EventSubscriberInterface
     public function fillSecretaryCalendar(CalendarEvent $calendar, DateTimeInterface $start, DateTimeInterface $end, array $filters)
     {
         date_default_timezone_set('Europe/Paris');
-        $events = $this->em->getRepository(Meeting::class)->findByBetweenDatesEvents($start, $end);
+        $doctor = $this->em->getRepository(Doctor::class)->findOneBy(['lastName' => $filters['doctor']]);
+        $events = $this->em->getRepository(Meeting::class)->findByBetweenDatesEvents($start, $end, $doctor);
 
         foreach ($events as $event) {
             $title = 'Rendez-vous de M. ' . $event->getPatient()->getLastName() . ' avec le docteur ' . $event->getDoctor()->getLastName();
