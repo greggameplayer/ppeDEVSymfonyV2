@@ -108,8 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function periodClick (info) {
+    console.log(info);
     const date = moment(info.date).format('YYYY-MM-DD HH:mm:ss')
-    if (isBackgroundEvent(info.jsEvent)) {
+    if (info.jsEvent.target.classList.contains('fc-bg-event') || info.jsEvent.target.classList.contains('fc-non-business') || info.jsEvent.target.innerHTML === 'Indisponible') {
         return
     }
 
