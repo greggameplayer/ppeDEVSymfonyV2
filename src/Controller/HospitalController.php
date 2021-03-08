@@ -67,7 +67,7 @@ class HospitalController extends AbstractController
      */
     public function updateService(Request $request, $id):Response 
     {
-        $service = $this->getDoctrine()->getRepository(Service::class)->findOneBy(['id' => $id]);;
+        $service = $this->getDoctrine()->getRepository(Service::class)->findOneBy(['id' => $id]);
         $form =  $this->createForm(ServiceType::class, $service);
         $form->handleRequest($request);
         

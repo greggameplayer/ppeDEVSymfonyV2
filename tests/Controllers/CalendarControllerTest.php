@@ -26,7 +26,7 @@ class CalendarControllerTest extends WebTestCase
     public function testCreateEvent()
     {
         $client = SecurityControllerTest::getPatientClient();
-        $client->request('POST', '/patient/event', ['date' => new DateTime('2021-03-03 10:00:00')]);
+        $client->request('POST', '/patient/event', ['date' => '2021-03-03 10:00:00']);
         $this->assertResponseStatusCodeSame(200);
         $this->assertPageTitleSame('Prendre rendez-vous');
     }

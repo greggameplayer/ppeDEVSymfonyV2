@@ -8,6 +8,10 @@ use App\Entity\Doctor;
 use App\Entity\Meeting;
 use App\Entity\Patient;
 use App\Entity\Status;
+use App\Entity\User;
+use App\Repository\DoctorRepository;
+use App\Repository\PatientRepository;
+use App\Repository\UserRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CalendarController extends AbstractController
 {
+
     /**
      * @Route("/patient", name="patientIndex")
      * @param Request $request
@@ -33,7 +38,30 @@ class CalendarController extends AbstractController
      */
     public function createEvent(Request $request): Response
     {
-        return $this->render('patient/eventForm.html.twig', ['date' => $request->get('date'), 'route' => "patientIndex"]);
+        $doctorRepo = $this->getDoctrine()->getRepository(Doctor::class);
+        $doctors = $doctorRepo->findAll();
+        return $this->render('patient/eventForm.html.twig', ['date' => strtotime($request->get('date')), 'doctors' => $doctors, 'route' => "patientIndex"]);
+    }
+
+    /**
+     * @Route("/patient/eventSubscribe", name="applyCreateMeeting", methods={"POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function applyCreateMeeting(Request $request): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $userRepo = $this->getDoctrine()->getRepository(User::class);
+        $patient = $this->getDoctrine()->getRepository(Patient::class)->findOneBy(["user" => $this->getUser()]);
+        $doctor = $this->getDoctrine()->getRepository(Doctor::class)->findOneBy(["lastName" => $request->get("lastName")]);
+        $dateTime = DateTime::createFromFormat( 'Y-m-d H:i:s', $request->get("date"))->modify("-1 hour");
+        $req = $userRepo->CreateMeeting($patient, $dateTime, $doctor);
+
+        $em->persist($req);
+        $em->flush();
+
+        return $this->redirectToRoute("patientIndex");
     }
 
     /**

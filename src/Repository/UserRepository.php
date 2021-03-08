@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Meeting;
+use App\Entity\Status;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,4 +49,15 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function CreateMeeting($patient, $date, $doctor)
+    {
+        $meeting = new Meeting();
+        $meeting->setStatus($this->getEntityManager()->getRepository(Status::class)->findOneBy(["id" => 1]));
+        $meeting->setDate($date);
+        $meeting->setDoctor($doctor);
+        $meeting->setPatient($patient);
+
+        return $meeting;
+    }
 }
