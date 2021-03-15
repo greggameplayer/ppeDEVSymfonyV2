@@ -51,23 +51,26 @@ class CalendarSubscriber implements EventSubscriberInterface
     public function fillPatientCalendar(CalendarEvent $calendar, DateTimeInterface $start, DateTimeInterface $end, array $filters)
     {
         date_default_timezone_set('Europe/Paris');
-        $events = $this->em->getRepository(Meeting::class)->findByBetweenDatesUnavailableEvents($start, $end);
+        $events = $this->em->getRepository(Meeting::class)->findByBetweenDatesOtherUserUnavailableEvents($start, $end);
 
         foreach ($events as $event) {
-            $calendar->addEvent(new Event(
-                'Indisponible',
-                $event->getDate()->modify('-30 minutes'),
-                $event->getDate()->modify('+30 minutes'),
-                [
-                    'editable' => false,
-                    'dropable' => false,
-                    'rendering' => 'background',
-                    'backgroundColor' => '#d9534f',
-                    'borderColor' => '#d9534f',
-                    'overlap' => false,
-                    'display' => 'background'
-                ]
-            ));
+            dump($this->em->getRepository(Doctor::class)->getAvailableDoctor($event->getDate()->format('Y-m-d H:i:s')));
+            if ($this->em->getRepository(Doctor::class)->getAvailableDoctor($event->getDate()->format('Y-m-d H:i:s')) == []) {
+                $calendar->addEvent(new Event(
+                    'Indisponible',
+                    $event->getDate()->modify('-30 minutes'),
+                    $event->getDate()->modify('+30 minutes'),
+                    [
+                        'editable' => false,
+                        'dropable' => false,
+                        'rendering' => 'background',
+                        'backgroundColor' => '#d9534f',
+                        'borderColor' => '#d9534f',
+                        'overlap' => false,
+                        'display' => 'background'
+                    ]
+                ));
+            }
         }
 
         $events = $this->em->getRepository(Meeting::class)->findByUserBetweenDatesEvents($start, $end);

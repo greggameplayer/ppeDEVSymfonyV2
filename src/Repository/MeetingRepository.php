@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Doctor;
 use App\Entity\Meeting;
 use App\Entity\Patient;
 use App\Entity\Status;
@@ -46,8 +47,7 @@ class MeetingRepository extends ServiceEntityRepository
     }
     */
 
-    public function findByBetweenDatesUnavailableEvents($start, $end)
-    {
+    public function findByBetweenDatesOtherUserUnavailableEvents($start, $end) {
         return $this->createQueryBuilder('q')
             ->where('q.date BETWEEN :from AND :to')
             ->andWhere('q.status <> :statOne')
