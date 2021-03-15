@@ -1,8 +1,11 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\Doctor;
 use App\Entity\Staff;
 use App\Entity\User;
+use App\Form\DoctorType;
+use App\Form\SecretaryType;
 use App\Form\StaffType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,6 +71,64 @@ class StaffController extends AbstractController
         }
 
         return $this->render('admin/staff/addStaff.html.twig', [
+            "form" => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/createDoctor", name="createDoctor")
+     * @param Request $request
+     * @return Response
+     */
+    public function createDoctor(Request $request):Response
+    {
+        $form =  $this->createForm(DoctorType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()&& $form->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($form->getData());
+            $em->flush();
+
+
+            return $this->redirectToRoute('homepageStaff');
+        }
+
+        return $this->render('admin/doctor/addDoctor.html.twig', [
+            "form" => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/createSecretary", name="createSecretary")
+     * @param Request $request
+     * @return Response
+     */
+    public function createSecretary(Request $request, UserPasswordEncoderInterface $passwordEncoder):Response
+    {
+        $user = new User();
+        $user->setRoles(['ROLE_SECRETARY']);
+        $form =  $this->createForm(SecretaryType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()&& $form->isValid()){
+            $user = $form->getData();
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('password')->getData()
+                )
+            );
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+
+            return $this->redirectToRoute('homepageStaff');
+        }
+
+        return $this->render('admin/secretary/addSecretary.html.twig', [
             "form" => $form->createView()
         ]);
     }
