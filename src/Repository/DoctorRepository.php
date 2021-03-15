@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Doctor;
+use App\Entity\Patient;
+use App\Entity\Status;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +49,22 @@ class DoctorRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getAvailableDoctor($start){
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+        SELECT doctor.first_name, doctor.last_name
+        FROM doctor
+        WHERE doctor.id NOT IN(
+            SELECT DISTINCT (doctor.id)
+            FROM doctor INNER JOIN meeting ON doctor.id = meeting.doctor_id
+            WHERE meeting.date = :start
+            AND meeting.status_id NOT IN (4,6)
+        )
+        ';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(["start" => $start]);
+
+        return $stmt->fetchAllAssociative();
+    }
 }
