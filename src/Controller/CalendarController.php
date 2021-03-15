@@ -39,7 +39,7 @@ class CalendarController extends AbstractController
     public function createEvent(Request $request): Response
     {
         $doctorRepo = $this->getDoctrine()->getRepository(Doctor::class);
-        $doctors = $doctorRepo->findAll();
+        $doctors = $doctorRepo->getAvailableDoctor(DateTime::createFromFormat('Y-m-d H:i:s', $request->get('date'))->modify('-1 hour')->format('Y-m-d H:i:s'));
         return $this->render('patient/eventForm.html.twig', ['date' => strtotime($request->get('date')), 'doctors' => $doctors, 'route' => "patientIndex"]);
     }
 

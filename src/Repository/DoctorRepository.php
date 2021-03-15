@@ -47,4 +47,21 @@ class DoctorRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function getAvailableDoctor($start){
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+        SELECT doctor.first_name, doctor.last_name
+        FROM doctor
+        WHERE doctor.id NOT IN(
+            SELECT DISTINCT (doctor.id)
+            FROM doctor INNER JOIN meeting ON doctor.id = meeting.doctor_id
+            WHERE meeting.date = :start
+        )
+        ';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(["start" => $start]);
+
+        return $stmt->fetchAllAssociative();
+    }
 }

@@ -23,7 +23,7 @@
                 <label for="lastName" class="h3 ml-4 mb-0">Docteur :</label>
                 <select class="form-control" id="lastName" name="lastName" required>
                     {% for doctor in doctors %}
-                        <option value={{ doctor.lastName }}>{{ doctor.lastName }} {{ doctor.firstName }}</option>
+                        <option value={{ doctor.last_name }}>{{ doctor.last_name }} {{ doctor.first_name }}</option>
                     {% endfor %}
                 </select>
             </div>
