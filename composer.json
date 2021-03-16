@@ -2,7 +2,7 @@
 	"name": "reggameplayer/ppe_dev_symfony_v2",
 	"description": "a School project",
     "type": "project",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "license": "proprietary",
     "require": {
 		"php": ">=7.2.5",
