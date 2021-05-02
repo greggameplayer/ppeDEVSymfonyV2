@@ -99,7 +99,7 @@ class PatientController extends AbstractController
         date_default_timezone_set('Europe/Paris');
         $currentDate =  DateTime::createFromFormat("Y-m-d H:i:s", date("Y-m-d H:i:s"));
         $manage->setModification($currentDate);
-        $manage->setIdStaff($this->getUser());
+        $manage->setIdStaff($this->getDoctrine()->getRepository(Staff::class)->findOneBy(["user"=>$this->getUser()]));
         $manage->setAction($action);
         $em = $this->getDoctrine()->getManager();
         $em->persist($manage);
